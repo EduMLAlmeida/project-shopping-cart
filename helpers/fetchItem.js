@@ -1,5 +1,8 @@
-const fetchItem = () => {
-  // seu código aqui
+const fetchItem = async (item) => {
+  const itemURL = `https://api.mercadolibre.com/items/${item}`;
+  const response = await fetch(itemURL);
+  const data = await response.json();
+  return data;
 };
 
 if (typeof module !== 'undefined') {
