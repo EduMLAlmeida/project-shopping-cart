@@ -1,3 +1,6 @@
+// constante criada porque a string se repetia no código(lint pediu).
+const cartItemsString = 'cart-items';
+
 function createProductImageElement(imageSource) {
   const img = document.createElement('img');
   img.className = 'item__image';
@@ -20,7 +23,7 @@ function getSkuFromProductItem(item) {
 
 function cartItemClickListener(event) {
   event.target.remove();
-  const cartItemsArray = document.getElementsByTagName('li');
+  const cartItemsArray = document.querySelectorAll('.cart__item');
   localStorage.removeItem('cartItemsStorage');
   localStorage.setItem('cartItemsStorage', JSON.stringify([]));
   for (let index = 0; index < cartItemsArray.length; index += 1) {
@@ -45,7 +48,7 @@ const addToCart = async (event) => {
   const productsObject = await fetchItem(productID);
   const { id, title, price } = productsObject;
   const dataObject = { sku: id, name: title, salePrice: price };
-  const cartProductsContainer = document.getElementById('cart-items');
+  const cartProductsContainer = document.getElementById(cartItemsString);
   cartProductsContainer.appendChild(createCartItemElement(dataObject));
   const cartItemsArray = document.getElementsByTagName('li');
   localStorage.removeItem('cartItemsStorage');
@@ -92,6 +95,22 @@ function createCartStorageItemElement(itemText) {
   return li;
 }
 
+const clearCartButton = document.getElementById('clear-button');
+const cartContainer = document.getElementById(cartItemsString);
+
+function clearCart() {
+  const cartProductItems = document.querySelectorAll('.cart__item');
+  console.log(cartProductItems);
+  console.log(cartProductItems.length);
+  for (let index = 0; index < cartProductItems.length; index += 1) {
+    console.log('teste2');
+    cartContainer.removeChild(cartContainer.firstElementChild);
+  }
+console.log('teste');
+}
+
+clearCartButton.addEventListener('click', clearCart);
+
 window.onload = () => {
   includesProduct();
 
@@ -101,7 +120,7 @@ window.onload = () => {
     localStorage.setItem('cartItemsStorage', JSON.stringify([]));
   } else {
     const cartItemsArray = JSON.parse(getSavedCartItems('cartItemsStorage'));
-    const cartProductsContainer = document.getElementById('cart-items');
+    const cartProductsContainer = document.getElementById(cartItemsString);
     cartItemsArray.forEach((element) => {
       cartProductsContainer.appendChild(createCartStorageItemElement(element));
     });
