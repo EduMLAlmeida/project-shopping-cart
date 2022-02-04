@@ -16,8 +16,18 @@ function getSkuFromProductItem(item) {
   return item.querySelector('span.item__sku').innerText;
 }
 
+// Comandos para utilizar local storage na função abaixo retirados de https://app.betrybe.com/course/fundamentals/javascript-dom-eventos-e-web-storage/javascript-web-storage/b332393f-7548-4075-83e3-f632735efb95/conteudos/e90b472b-e79b-4b29-9979-8222daff0d70/local-e-session-storage/2ac29f5c-c36e-473d-8546-6fb18340e55e?use_case=next_button
+
 function cartItemClickListener(event) {
   event.target.remove();
+  const cartItemsArray = document.getElementsByTagName('li');
+  localStorage.removeItem('cartItemsStorage');
+  localStorage.setItem('cartItemsStorage', JSON.stringify([]));
+  for (let index = 0; index < cartItemsArray.length; index += 1) {
+    const cartItems = JSON.parse(localStorage.getItem('cartItemsStorage'));
+    cartItems.push(cartItemsArray[index].innerText);
+    localStorage.setItem('cartItemsStorage', JSON.stringify(cartItems));
+  }
 }
 
 function createCartItemElement({ sku, name, salePrice }) {
@@ -28,14 +38,23 @@ function createCartItemElement({ sku, name, salePrice }) {
   return li;
 }
 
+// Comandos para utilizar local storage na função abaixo retirados de https://app.betrybe.com/course/fundamentals/javascript-dom-eventos-e-web-storage/javascript-web-storage/b332393f-7548-4075-83e3-f632735efb95/conteudos/e90b472b-e79b-4b29-9979-8222daff0d70/local-e-session-storage/2ac29f5c-c36e-473d-8546-6fb18340e55e?use_case=next_button
+
 const addToCart = async (event) => {
-  // função criada por mim.
   const productID = event.target.parentElement.firstElementChild.innerText;
   const productsObject = await fetchItem(productID);
   const { id, title, price } = productsObject;
   const dataObject = { sku: id, name: title, salePrice: price };
-  const productsContainer = document.getElementById('cart-items');
-  productsContainer.appendChild(createCartItemElement(dataObject));
+  const cartProductsContainer = document.getElementById('cart-items');
+  cartProductsContainer.appendChild(createCartItemElement(dataObject));
+  const cartItemsArray = document.getElementsByTagName('li');
+  localStorage.removeItem('cartItemsStorage');
+  localStorage.setItem('cartItemsStorage', JSON.stringify([]));
+  for (let index = 0; index < cartItemsArray.length; index += 1) {
+    const cartItems = JSON.parse(localStorage.getItem('cartItemsStorage'));
+    cartItems.push(cartItemsArray[index].innerText);
+    localStorage.setItem('cartItemsStorage', JSON.stringify(cartItems));
+  }
 };
 
 function createProductItemElement({ sku, name, image }) {
@@ -64,4 +83,5 @@ const includesProduct = async () => {
 
 window.onload = () => {
   includesProduct();
+  getSavedCartItems();
 };
